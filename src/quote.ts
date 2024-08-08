@@ -1,7 +1,7 @@
 import { load as cheerio } from 'cheerio';
 
-import { Stock } from './Stock';
 import { Insider } from './Insider';
+import { Stock, StockNews } from './Stock';
 import { capitalizeFirstLetters, fixKeys, fixValues, getStockPage, TempObject } from './utils';
 
 export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
@@ -26,7 +26,8 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
             mainTable = $('.content div.screener_snapshot-table-wrapper > table > tbody').find('tr'),
             insidersTable = $(
                 '.content .ticker-wrapper > div.fv-container > table > tbody > tr > td > div > table:nth-child(2) > tbody > tr:nth-child(13) > td > table > tbody'
-            ).find('tr');
+            ).find('tr'),
+            newsTable = $('#news-table > tbody');
 
         // Parse non tabular data
         let stock: TempObject = {
@@ -93,6 +94,39 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 secForm4Link: $(elements[8]).find('a').attr('href'),
             };
             stock.insidersDeals.push(insObj);
+        }
+
+        const newsItems = newsTable.find('tr');
+        stock.news = [];
+        let lastDate = '';
+        for (const element of newsItems) {
+            const elements = $(element).find('td');
+
+            const url = $(elements).find('a').attr('href');
+
+            if (url) {
+                const timestampSplit = $(elements[0]).text().trim().split(' ');
+                let timeText;
+                if (timestampSplit.length != 1) {
+                    const today = new Date();
+                    lastDate = timestampSplit[0] === 'Today' ? `${today.getDate()}/${today.getMonth()}/${today.getFullYear()}`  : timestampSplit[0];
+                    timeText = timestampSplit[1];
+                } else {
+                    timeText = timestampSplit[0];
+                }
+
+                const isAm = timeText.includes('AM');
+                timeText = timeText.replace('AM', '').replace('PM', '');
+                const timestamp = new Date(`${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`).getTime();
+
+                const newsObj: StockNews = {
+                    title: $(elements).find('.tab-link-news').text(),
+                    url,
+                    source: $('#news-table > tbody > tr:nth-child(2) > td:nth-child(2) > div > div.news-link-right.flex.gap-1.items-center > span').text(),
+                    timestamp,
+                };
+                stock.news.push(newsObj);
+            }            
         }
 
         return stock as Stock;

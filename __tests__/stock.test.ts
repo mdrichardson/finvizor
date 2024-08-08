@@ -2,6 +2,7 @@ import * as finvizor from '../src';
 
 test('Should get stock response from finviz', async () => {
     const stock = await finvizor.stock('AAPL');
+    console.log(JSON.stringify(stock.news, null, 2));
     // Assert that response is not null at least
     expect(stock).not.toEqual({});
     // Assert that String data from the response is correct
@@ -14,6 +15,7 @@ test('Should get stock response from finviz', async () => {
     expect(stock.country).toBe('USA');
     // Assert that insider transaction exists
     expect(stock.insidersDeals.length).toBeGreaterThan(0);
+    expect(stock.news.length).toBeGreaterThan(0);
 });
 
 test('Should get etf response from finviz', async () => {

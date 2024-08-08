@@ -1,5 +1,16 @@
-import { Insider } from './Insider';
 import { Earnings } from './Earnings';
+import { Insider } from './Insider';
+
+export interface StockNews {
+    /** News title */
+    title: string;
+    /** News URL */
+    url: string;
+    /** News source */
+    source: string;
+    /** News publication timestamp */
+    timestamp: number;
+}
 
 export interface Stock {
     /** Stock ticker */
@@ -160,4 +171,6 @@ export interface Stock {
     change: number | null;
     /** Array of insiders tades */
     insidersDeals: Array<Insider>;
+    /** Array of news items */
+    news: Array<StockNews>;
 }
