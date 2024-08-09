@@ -16,6 +16,7 @@ test('Should get stock response from finviz', async () => {
     // Assert that insider transaction exists
     expect(stock.insidersDeals.length).toBeGreaterThan(0);
     expect(stock.news.length).toBeGreaterThan(0);
+    console.log(new Date(stock.news[1].timestamp).toLocaleString(), stock.news[1].title);
 });
 
 test('Should get etf response from finviz', async () => {
