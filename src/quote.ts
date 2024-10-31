@@ -111,7 +111,7 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                     const today = new Date();
                     const todayTimeText = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
                     lastDate = timestampSplit.includes('Today') || timestampSplit.includes(todayTimeText) ? `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`  : timestampSplit[0];
-                    timeText = timestampSplit[1];
+                    timeText = timestampSplit[1] ?? timestampSplit[0];
                 } else {
                     timeText = timestampSplit[0];
                 }
