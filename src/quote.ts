@@ -119,7 +119,7 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 timeText = timeText.replace('AM', '').replace('PM', '');
                 const timestamp = new Date(`${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`).getTime();
                 // Finviz defaults to EST, so let's convert to UTC
-                const offset = -5;
+                const offset = 5;
                 const utc = new Date(timestamp + offset * 3600000);
 
                 const newsObj: StockNews = {

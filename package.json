@@ -1,6 +1,6 @@
 {
     "name": "finvizor",
-    "version": "1.2.7",
+    "version": "1.2.9",
     "description": "Get finviz stock data in proper format",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
