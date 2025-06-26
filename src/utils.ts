@@ -184,3 +184,38 @@ export const fixValues = (obj: TempObject): Stock => {
 
     return obj as Stock;
 };
+
+export function easternTimestampToUTC(timestamp: number) {
+    // Create a Date object from the timestamp
+    const easternDate = new Date(timestamp);
+
+    // Format that date in America/New_York time
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        hour12: false,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
+    // Extract parts
+    const parts = formatter.formatToParts(easternDate);
+    const year = parts.find(p => p.type === 'year')?.value ?? '1970';
+    const month = parts.find(p => p.type === 'month')?.value ?? '01';
+    const day = parts.find(p => p.type === 'day')?.value ?? '01';
+    const hour = parts.find(p => p.type === 'hour')?.value ?? '00';
+    const minute = parts.find(p => p.type === 'minute')?.value ?? '00';
+    const second = parts.find(p => p.type === 'second')?.value ?? '00';
+    const dateStr = `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+
+    // Parse as if it's in New York time, treat it as UTC, then shift to real UTC
+    const parsedNYAsUTC = new Date(dateStr + 'Z');
+    const offset = easternDate.getTime() - parsedNYAsUTC.getTime();
+    const utcDate = new Date(timestamp - offset);
+
+    return utcDate;
+}
+  

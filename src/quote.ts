@@ -2,7 +2,7 @@ import { load as cheerio } from 'cheerio';
 
 import { Insider } from './Insider';
 import { Stock, StockNews } from './Stock';
-import { capitalizeFirstLetters, fixKeys, fixValues, getStockPage, TempObject } from './utils';
+import { capitalizeFirstLetters, easternTimestampToUTC, fixKeys, fixValues, getStockPage, TempObject } from './utils';
 
 export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
     try {
@@ -118,9 +118,8 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 const isAm = timeText.includes('AM');
                 timeText = timeText.replace('AM', '').replace('PM', '');
                 const timestamp = new Date(`${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`).getTime();
-                // Finviz defaults to EST, so let's convert to UTC
-                const offset = 5;
-                const utc = new Date(timestamp + offset * 3600000);
+
+                const utc = easternTimestampToUTC(timestamp);
 
                 const newsObj: StockNews = {
                     title: $(elements).find('.tab-link-news').text(),
