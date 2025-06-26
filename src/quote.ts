@@ -1,8 +1,9 @@
 import { load as cheerio } from 'cheerio';
 
+import { DateTime } from 'luxon';
 import { Insider } from './Insider';
 import { Stock, StockNews } from './Stock';
-import { capitalizeFirstLetters, easternTimestampToUTC, fixKeys, fixValues, getStockPage, TempObject } from './utils';
+import { capitalizeFirstLetters, fixKeys, fixValues, getStockPage, TempObject } from './utils';
 
 export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
     try {
@@ -117,17 +118,19 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 }
                 const isAm = timeText.includes('AM');
                 timeText = timeText.replace('AM', '').replace('PM', '');
-                const timestamp = new Date(`${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`).getTime();
 
-                const utc = easternTimestampToUTC(timestamp);
+                const dateTimeString = `${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`;
+                const dt = DateTime.fromFormat(dateTimeString, 'M/d/yyyy h:mm a', { zone: 'America/New_York' });
+                const utc = dt.toUTC();
 
                 const newsObj: StockNews = {
                     title: $(elements).find('.tab-link-news').text(),
                     url,
                     source: $('#news-table > tbody > tr:nth-child(2) > td:nth-child(2) > div > div.news-link-right.flex.gap-1.items-center > span').text(),
-                    timestamp: utc.getTime(),
+                    timestamp: utc.toMillis(),
                 };
                 stock.news.push(newsObj);
+                console.log(`News: ${newsObj.title} - ${newsObj.timestamp} - ${newsObj.url}`);
             }            
         }
 
