@@ -120,7 +120,7 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 timeText = timeText.replace('AM', '').replace('PM', '');
 
                 const dateTimeString = `${lastDate} ${timeText} ${isAm ? 'AM' : 'PM'}`;
-                const dt = DateTime.fromFormat(dateTimeString, 'M/d/yyyy h:mm a', { zone: 'America/New_York' });
+                const dt = DateTime.fromFormat(dateTimeString, 'LLL-dd-yy hh:mm a', { zone: 'America/New_York' });
                 const utc = dt.toUTC();
 
                 const newsObj: StockNews = {
@@ -130,7 +130,6 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                     timestamp: utc.toMillis(),
                 };
                 stock.news.push(newsObj);
-                console.log(`News: ${newsObj.title} - ${newsObj.timestamp} - ${newsObj.url}`);
             }            
         }
 
