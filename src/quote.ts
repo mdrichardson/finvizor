@@ -110,8 +110,10 @@ export const getStock = async (ticker: string = ''): Promise<Stock | never> => {
                 let timeText;
                 if (timestampSplit.length != 1) {
                     const today = new Date();
-                    const todayTimeText = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
-                    lastDate = timestampSplit.includes('Today') || timestampSplit.includes(todayTimeText) ? `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`  : timestampSplit[0];
+                    const todayTimeText = DateTime.fromJSDate(today).toFormat('LLL-dd-yy');
+                    lastDate = timestampSplit.includes('Today') || timestampSplit.includes(todayTimeText)
+                        ? DateTime.fromJSDate(today).toFormat('LLL-dd-yy')
+                        : DateTime.fromFormat(timestampSplit[0], 'LLL-dd-yy').toFormat('LLL-dd-yy');
                     timeText = timestampSplit[1] ?? timestampSplit[0];
                 } else {
                     timeText = timestampSplit[0];

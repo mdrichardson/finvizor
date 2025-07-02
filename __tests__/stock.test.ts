@@ -1,8 +1,7 @@
 import * as finvizor from '../src';
 
 test('Should get stock response from finviz', async () => {
-    const stock = await finvizor.stock('AAPL');
-    console.log(JSON.stringify(stock.news, null, 2));
+    const stock = await finvizor.stock('ICU');
     // Assert that response is not null at least
     expect(stock).not.toEqual({});
     // Assert that String data from the response is correct
